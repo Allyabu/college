@@ -1,11 +1,13 @@
+require('dotenv').config(); // Hii lazima iwe juu kabisa
+
 const mysql = require('mysql2');
 
 const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'college_staff_manager',
-  port: 3306
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT
 });
 
 connection.connect((err) => {
@@ -13,7 +15,7 @@ connection.connect((err) => {
     console.error('Error connecting to MySQL:', err);
     return;
   }
-  console.log('Connected to MySQL via XAMPP');
+  console.log('Connected to MySQL via Railway');
 });
 
 module.exports = connection;
