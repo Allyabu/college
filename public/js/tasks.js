@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('No token found');
-      const response = await fetch('http://localhost:3000/api/tasks/staff', {
+      const response = await fetch('https://college-7zfr.onrender.com/api/tasks/staff', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (!response.ok) throw new Error(await response.text());
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'login.html';
         return;
       }
-      const response = await fetch('http://localhost:3000/api/tasks', {
+      const response = await fetch('https://college-7zfr.onrender.com/api/tasks', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (!response.ok) throw new Error(await response.text());
@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       try {
         const method = id ? 'PUT' : 'POST';
-        const url = id ? `http://localhost:3000/api/tasks/${id}` : 'http://localhost:3000/api/tasks';
+        const url = id ? `https://college-7zfr.onrender.com/api/tasks/${id}` : 'https://college-7zfr.onrender.com/api/tasks';
         const response = await fetch(url, {
           method,
           headers: {
@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.deleteTask = async (id) => {
     if (!confirm('Are you sure you want to delete this task?')) return;
     try {
-      const response = await fetch(`http://localhost:3000/api/tasks/${id}`, {
+      const response = await fetch(`https://college-7zfr.onrender.com/api/tasks/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.approveTask = async (id) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/tasks/approve/${id}`, {
+      const response = await fetch(`https://college-7zfr.onrender.com/api/tasks/approve/${id}`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
@@ -275,7 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     console.log(`Submitting evidence for task ${currentTaskId}: ${input}`);
     try {
-      const response = await fetch(`http://localhost:3000/api/tasks/${currentTaskId}`, {
+      const response = await fetch(`https://college-7zfr.onrender.com/api/tasks/${currentTaskId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -302,7 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     console.log(`Submitting admin rejection for task ${currentTaskId}: ${input}`);
     try {
-      const response = await fetch(`http://localhost:3000/api/tasks/reject/${currentTaskId}`, {
+      const response = await fetch(`https://college-7zfr.onrender.com/api/tasks/reject/${currentTaskId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -335,7 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     console.log(`Submitting rejection for task ${currentTaskId}: ${reason}`);
     try {
-      const response = await fetch(`http://localhost:3000/api/tasks/request-rejection`, {
+      const response = await fetch(`https://college-7zfr.onrender.com/api/tasks/request-rejection`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -361,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.handleRejectionRequest = async (id, action) => {
     if (!confirm('Are you sure you want to ' + action + ' this rejection request?')) return;
     try {
-      const response = await fetch(`http://localhost:3000/api/tasks/rejection-request/${id}/${action}`, {
+      const response = await fetch(`https://college-7zfr.onrender.com/api/tasks/rejection-request/${id}/${action}`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });

@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const staffTable = document.getElementById('staffTable');
 
   const loadStaff = async () => {
-    const response = await fetch('http://localhost:3000/api/staff', {
+    const response = await fetch('https://college-7zfr.onrender.com/api/staff', {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
     });
     const staff = await response.json();
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const name = document.getElementById('name').value;
     const role = document.getElementById('role').value;
     const method = id ? 'PUT' : 'POST';
-    const url = id ? `http://localhost:3000/api/staff/${id}` : 'http://localhost:3000/api/staff';
+    const url = id ? `https://college-7zfr.onrender.com/api/staff/${id}` : 'https://college-7zfr.onrender.com/api/staff';
     await fetch(url, {
       method,
       headers: {
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   window.deleteStaff = async (id) => {
-    await fetch(`http://localhost:3000/api/staff/${id}`, {
+    await fetch(`https://college-7zfr.onrender.com/api/staff/${id}`, {
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
     });

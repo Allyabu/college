@@ -87,10 +87,10 @@
         document.getElementById('adminStaff').classList.remove('hidden');
         try {
           const [staffResponse, tasksResponse] = await Promise.all([
-            fetch('http://localhost:3000/api/staff', {
+            fetch('https://college-7zfr.onrender.com/api/staff', {
               headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             }),
-            fetch('http://localhost:3000/api/tasks', {
+            fetch('https://college-7zfr.onrender.com/api/tasks', {
               headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             })
           ]);
@@ -119,7 +119,7 @@
       } else if (role === 'staff') {
         document.getElementById('staffTasks').classList.remove('hidden');
         try {
-          const response = await fetch('http://localhost:3000/api/tasks', {
+          const response = await fetch('https://college-7zfr.onrender.com/api/tasks', {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
           });
           if (!response.ok) throw new Error(await response.text());
@@ -147,7 +147,7 @@
     async function deleteStaff(staffId) {
       if (!confirm('Are you sure you want to delete this staff member?')) return;
       try {
-        const response = await fetch(`http://localhost:3000/api/staff/${staffId}`, {
+        const response = await fetch(`https://college-7zfr.onrender.com/api/staff/${staffId}`, {
           method: 'DELETE',
           headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });

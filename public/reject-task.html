@@ -34,7 +34,7 @@
       const rejectForm = document.getElementById('rejectForm');
 
       try {
-        const response = await fetch('http://localhost:3000/api/tasks', {
+        const response = await fetch('https://college-7zfr.onrender.com/api/tasks', {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
         if (!response.ok) throw new Error(await response.text());
@@ -61,7 +61,7 @@
           return;
         }
         try {
-          const response = await fetch('http://localhost:3000/api/tasks/request-rejection', {
+          const response = await fetch('https://college-7zfr.onrender.com/api/tasks/request-rejection', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
