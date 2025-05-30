@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>College Staff Manager - Reports</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100" onload="updateNavigation()">
+  <nav class="bg-blue-500 p-4 text-white">
+    <div class="container mx-auto flex justify-between">
+      <h1 class="text-xl font-bold">College Staff Manager</h1>
+      <div id="nav-links"></div>
+    </div>
+  </nav>
+  <div class="container mx-auto p-6">
+    <h2 class="text-2xl font-bold mb-4">Daily Task Reports</h2>
+    <div class="mb-4 flex flex-wrap gap-4">
+      <div>
+        <label class="block text-gray-700">Select Date</label>
+        <input type="date" id="reportDate" class="p-2 border rounded">
+      </div>
+      <div>
+        <label class="block text-gray-700">Staff</label>
+        <select id="reportStaff" class="p-2 border rounded">
+          <option value="">All Staff</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-gray-700">Role</label>
+        <select id="reportRole" class="p-2 border rounded">
+          <option value="">All Roles</option>
+          <option value="Cleaner">Cleaner</option>
+          <option value="Security">Security</option>
+          <option value="Gardener">Gardener</option>
+          <option value="Cook">Cook</option>
+        </select>
+      </div>
+      <div class="flex items-end">
+        <button onclick="loadReport()" class="bg-blue-500 text-white p-2 rounded mr-2">Load Report</button>
+        <button onclick="exportReport()" class="bg-green-500 text-white p-2 rounded">Export CSV</button>
+      </div>
+    </div>
+    <table class="w-full border">
+      <thead>
+        <tr class="bg-gray-200">
+          <th class="p-2">ID</th>
+          <th class="p-2">Staff</th>
+          <th class="p-2">Description</th>
+          <th class="p-2">Status</th>
+          <th class="p-2">Approved</th>
+        </tr>
+      </thead>
+      <tbody id="reportTable"></tbody>
+    </table>
+  </div>
+  <script src="js/auth.js"></script>
+  <script>
+    async function loadStaffFilter() {
+      const response = await fetch('http://localhost:3000/api/tasks/staff', {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      const staff = await response.json();
+      const select = document.getElementById('reportStaff');
+      staff.forEach(s => {
+        const option = document.createElement('option');
+        option.value = s.id;
+        option.textContent = s.name;
+        select.appendChild(option);
+      });
+    }
+
+    async function loadReport() {
+      const date = document.getElementById('reportDate').value || new Date().toISOString().split('T')[0];
+      const staffId = document.getElementById('reportStaff').value;
+      const role = document.getElementById('reportRole').value;
+      let url = `http://localhost:3000/api/tasks/report?date=${date}`;
+      if (staffId) url += `&staff_id=${staffId}`;
+      if (role) url += `&role=${role}`;
+      const response = await fetch(url, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      const tasks = await response.json();
+      const tableBody = document.getElementById('reportTable');
+      tableBody.innerHTML = '';
+      tasks.forEach(task => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="p-2 border">${task.id}</td>
+          <td class="p-2 border">${task.staff_name}</td>
+          <td class="p-2 border">${task.description}</td>
+          <td class="p-2 border">${task.status}</td>
+          <td class="p-2 border">${task.approved ? 'Yes' : 'No'}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    function exportReport() {
+      const table = document.querySelector('table');
+      let csv = 'ID,Staff,Description,Status,Approved\n';
+      const rows = table.querySelectorAll('tr');
+      for (let i = 1; i < rows.length; i++) {
+        const cols = rows[i].querySelectorAll('td');
+        const row = [];
+        cols.forEach(col => row.push(`"${col.textContent.replace(/"/g, '""')}"`));
+        csv += row.join(',') + '\n';
+      }
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.setAttribute('href', url);
+      a.setAttribute('download', `report_${document.getElementById('reportDate').value || 'today'}.csv`);
+      a.click();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadStaffFilter();
+      loadReport();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>College Staff Manager - Reject Task</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100" onload="updateNavigation()">
+  <nav class="bg-blue-600 p-4 text-white shadow-md">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-2xl font-bold">College Staff Manager</h1>
+      <div id="nav-links"></div>
+    </div>
+  </nav>
+  <div class="container mx-auto p-6">
+    <h2 class="text-3xl font-bold mb-6 text-gray-800">Reject Task</h2>
+    <form id="rejectForm" class="bg-white p-6 rounded-lg shadow-md">
+      <div class="mb-4">
+        <label for="taskId" class="block text-gray-700">Select Task</label>
+        <select id="taskId" class="w-full p-2 border rounded" required></select>
+      </div>
+      <div class="mb-4">
+        <label for="reason" class="block text-gray-700">Reason for Rejection</label>
+        <textarea id="reason" class="w-full p-2 border rounded" placeholder="Enter reason (e.g., I am sick)" rows="4" required></textarea>
+      </div>
+      <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Submit Rejection</button>
+    </form>
+  </div>
+  <script src="js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const taskSelect = document.getElementById('taskId');
+      const rejectForm = document.getElementById('rejectForm');
+
+      try {
+        const response = await fetch('http://localhost:3000/api/tasks', {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        });
+        if (!response.ok) throw new Error(await response.text());
+        const tasks = await response.json();
+        console.log('Tasks for rejection:', tasks);
+        taskSelect.innerHTML = '<option value="">Select Task</option>';
+        tasks.filter(t => t.status !== 'completed' && !t.rejection_request_id).forEach(task => {
+          const option = document.createElement('option');
+          option.value = task.id;
+          option.textContent = `ID: ${task.id} - ${task.description}`;
+          taskSelect.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Error loading tasks:', error);
+        alert('Failed to load tasks: ' + error.message);
+      }
+
+      rejectForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const task_id = taskSelect.value;
+        const reason = document.getElementById('reason').value.trim();
+        if (!task_id || !reason) {
+          alert('Task and reason are required');
+          return;
+        }
+        try {
+          const response = await fetch('http://localhost:3000/api/tasks/request-rejection', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({ task_id, reason })
+          });
+          if (!response.ok) throw new Error(await response.text());
+          console.log('Rejection submitted for task:', task_id);
+          alert('Rejection request sent to admin');
+          window.location.href = 'staff-tasks.html';
+        } catch (error) {
+          console.error('Error submitting rejection:', error);
+          alert('Failed to send rejection: ' + error.message);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
